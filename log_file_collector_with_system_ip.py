@@ -11,10 +11,9 @@ from collections import defaultdict
 from scapy.all import srp, Ether, ARP, conf
 
 
-dest_location = "/media/cssdesk/elk_data/temp_pre_processed_logs"
-elk_dest_location = "/media/cssdesk/elk_data/elk_log_source/system_logs"
-dest_location_with_timestamp = dest_location + "/" + time.strftime("%Y-%b-%d-%H%M%S")
-elk_dest_location_with_timestamp = elk_dest_location + "/" + time.strftime("%Y-%b-%d-%H%M%S")
+dest_root = "/media/cssdesk/elk_data"
+
+
 
 def is_tool(name):
     try:
@@ -45,13 +44,20 @@ def extract(pattern, tar_url, extract_path='/media/cssdesk/elk_data/elk_log_sour
 if __name__ == "__main__":
 
     #CHECK if destination folder exist else exit
-    if not os.path.isdir(dest_location):
-        print ("Destination folder not available. Create one and rerun the log_collector. Exiting tests!")			
-        sys.exit()
-
+    if not os.path.isdir(dest_root):
+        print ("Destination folder not available. Creating one new location!")			
+        dest_root = os.getcwd()
+    
+    dest_location = dest_root + "/temp_pre_processed_logs"
+    elk_dest_location = dest_root + "/elk_log_source/system_logs"
+	
+    dest_location_with_timestamp = dest_location + "/" + time.strftime("%Y-%b-%d-%H%M%S")
+    elk_dest_location_with_timestamp = elk_dest_location + "/" + time.strftime("%Y-%b-%d-%H%M%S")
+	
     try:
         #os.system("mkdir -p " + dest_location_with_timestamp)
-        os.mkdir(dest_location_with_timestamp)
+        os.makedirs(dest_location_with_timestamp)
+        os.makedirs(elk_dest_location_with_timestamp)
     except IOError as (errno, strerror):
         print ("I/O error({0}): {1}".format(errno, strerror))
         sys.exit(1)
